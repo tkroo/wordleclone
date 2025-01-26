@@ -1,7 +1,4 @@
 <script lang="ts">
-
-  type myStatus = 'i' | 'c' | 'x' | '';
-
   import wordlist from './lib/wordlewordlist.js';
   let word = $state('');
   const abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
@@ -14,7 +11,8 @@
   let board2 = $state([ { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) } ]);
   let currentAttempt = $state(0);
   let debug = $state(false);
-
+  let playbutton: HTMLButtonElement;
+  
   function chooseWord() {
     return wordlist[Math.floor(Math.random() * wordlist.length)].toLowerCase();
   }
@@ -100,6 +98,7 @@
       console.log('solved!');
       solved = true;
       message = `You got it in ${currentAttempt + 1} attempts!`;
+      playbutton.focus();
       return;
     }
     if(currentAttempt == 5) {
@@ -132,11 +131,11 @@
   <div class="wordgrid">
     {#each board2 as g}
       {#each g.word as letter, i}
-        <div class="letter" class:entered={letter != ' '} data-status={g.matches[i]}>{letter}</div>
+        <div class="letter" class:entered={letter != ' '} data-status={g.matches[i]} style="transition-delay: {i * 50}ms">{letter}</div>
       {/each}
     {/each}
   </div>
-  <div class="message">{message}{#if solved}<button class="playagain" onclick={setup}>Play again</button>{/if}</div>
+  <div class="message">{message}<button class="playagain" class:showme={solved} bind:this={playbutton} onclick={setup}>Play again</button></div>
   <div class="qwertygrid">
     {#each qwerty2 as row}
       <div class="row">
@@ -191,6 +190,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+		transform-style: preserve-3d;
+    /* transition: transform 100s ease-in-out; */
   }
 
   .letter.entered {
@@ -247,6 +249,14 @@
     font-size: 1.2rem;
     background-color: #fff;
     color: #000;
+    visibility: hidden;
+    width: 0;
+    margin-left: 0;
+    padding: 0;
+  }
+  .showme {
+    visibility: visible;
+    width: auto;
     margin-left: 1rem;
     padding: 0.25rem 0.5rem;
   }
