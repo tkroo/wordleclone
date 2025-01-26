@@ -3,7 +3,7 @@
   type myStatus = 'i' | 'c' | 'x' | '';
 
   import wordlist from './lib/wordlewordlist.js';
-  const word = wordlist[Math.floor(Math.random() * wordlist.length)].toLowerCase();
+  let word = $state('');
   const abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
   const alphabet = abc.concat(abc.map(x => x.toLowerCase()));
   let qwerty = [['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'], ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'], ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M' ,'DELETE']];
@@ -15,10 +15,28 @@
   let currentAttempt = $state(0);
   let debug = $state(false);
 
+  function chooseWord() {
+    return wordlist[Math.floor(Math.random() * wordlist.length)].toLowerCase();
+  }
+
+  function setup() {
+    word = chooseWord();
+    solved = false;
+    message = ' ';
+    guess = '';
+    board2 = [ { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) } ];
+    qwerty2 = qwerty.map(x => x.map(y => ({'value':y, 'status': ''})));
+    currentAttempt = 0;
+  }
+
+  setup();
 
   function handleKeyDown(e: KeyboardEvent) {
     if (e.key === '-') {
       debug = !debug;
+    }
+    if (e.key === '=') {
+      setup();
     }
     if(!solved) {
       if (alphabet.includes(e.key)) {      
@@ -118,15 +136,15 @@
       {/each}
     {/each}
   </div>
-  <div class="message">{message}</div>
+  <div class="message">{message}{#if solved}<button class="playagain" onclick={setup}>Play again</button>{/if}</div>
   <div class="qwertygrid">
     {#each qwerty2 as row}
       <div class="row">
       {#each row as letter}
         {#if letter.value == 'ENTER'}
-          <button onclick={() => enterPressed()} class="qwertyletter" data-status={letter.status} data-val={letter.value}>{letter.value}</button>
+          <button onclick={() => enterPressed()} class="qwertyletter" data-status={letter.status} data-val={letter.value} aria-label="Enter">{letter.value}</button>
         {:else if letter.value == 'DELETE'}
-          <button onclick={() => deletePressed()} class="qwertyletter" data-status={letter.status} data-val={letter.value}>
+          <button onclick={() => deletePressed()} class="qwertyletter" data-status={letter.status} data-val={letter.value} aria-label="Delete">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M11 10L15 14M11 14L15 10M2.7716 13.5185L7.43827 17.5185C7.80075 17.8292 8.26243 18 8.73985 18H18C19.1046 18 20 17.1046 20 16V8C20 6.89543 19.1046 6 18 6H8.73985C8.26243 6 7.80075 6.17078 7.43827 6.48149L2.7716 10.4815C1.84038 11.2797 1.84038 12.7203 2.7716 13.5185Z" stroke="#f6f5f4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
           </button>
         {:else}
@@ -157,6 +175,9 @@
     margin-bottom: 2rem;
     height: 2rem;
     font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .letter {
@@ -220,6 +241,14 @@
   .letter[data-status='x'], .qwertyletter[data-status='x'] {
     background-color: #3a3a3c;
     border-color: #3a3a3c;
+  }
+
+  .playagain {
+    font-size: 1.2rem;
+    background-color: #fff;
+    color: #000;
+    margin-left: 1rem;
+    padding: 0.25rem 0.5rem;
   }
 
 </style>
