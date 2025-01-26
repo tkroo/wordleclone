@@ -142,7 +142,7 @@
     width: var(--s);
     height: var(--s);
     border: 2px solid #444;
-    font-size: 3.2em;
+    font-size: 3rem;
     font-weight: bold;
     text-transform: uppercase;
     display: flex;
