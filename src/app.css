@@ -83,7 +83,10 @@ button:focus-visible {
 
 @media (max-width: 800px) {
   html {
-    font-size: 10px;
-
+    font-size: 12px;
+  }
+  #app {
+    max-width: 790px;
+    padding: 2rem 0 0 0;
   }
 }
