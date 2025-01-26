@@ -23,26 +23,40 @@
     if(!solved) {
       if (alphabet.includes(e.key)) {      
         let k = e.key;
-        if(guess.length < 5) {
-          let w = guess + k;
-          guess = w;
-          board2[currentAttempt].word = guess.padEnd(5, ' ');
-        }
+        letterPressed(k);
       }
       if (e.key === 'Enter') {
-        if(guess.length > 5) {
-          return;
-        } else {
-          compareGuess();
-        }
+        enterPressed();
       }
       if (e.key === 'Backspace' || e.key === 'Delete') {
-        let w = guess.slice(0, -1);
-        guess = w;
-        board2[currentAttempt].word = guess.padEnd(5, ' ');
+        deletePressed();
       }
     }
   }
+
+  function letterPressed(k: string) {
+    if(guess.length < 5) {
+      let w = guess + k;
+      guess = w;
+      board2[currentAttempt].word = guess.padEnd(5, ' ');
+    }
+  }
+
+  function enterPressed() {
+    if(guess.length > 5) {
+      return;
+    } else {
+      compareGuess();
+    }
+  }
+
+  function deletePressed() {
+    let w = guess.slice(0, -1);
+    guess = w;
+    board2[currentAttempt].word = guess.padEnd(5, ' ');
+  }
+
+
 
   function compareGuess() {
     if(!wordlist.includes(guess.toLowerCase())) {
@@ -100,7 +114,7 @@
   <div class="wordgrid">
     {#each board2 as g}
       {#each g.word as letter, i}
-        <div class="letter" data-status={g.matches[i]}>{letter}</div>
+        <div class="letter" class:entered={letter != ' '} data-status={g.matches[i]}>{letter}</div>
       {/each}
     {/each}
   </div>
@@ -109,7 +123,15 @@
     {#each qwerty2 as row}
       <div class="row">
       {#each row as letter}
-        <div class="qwertyletter" data-status={letter.status} data-val={letter.value}>{letter.value}</div>
+        {#if letter.value == 'ENTER'}
+          <button onclick={() => enterPressed()} class="qwertyletter" data-status={letter.status} data-val={letter.value}>{letter.value}</button>
+        {:else if letter.value == 'DELETE'}
+          <button onclick={() => deletePressed()} class="qwertyletter" data-status={letter.status} data-val={letter.value}>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M11 10L15 14M11 14L15 10M2.7716 13.5185L7.43827 17.5185C7.80075 17.8292 8.26243 18 8.73985 18H18C19.1046 18 20 17.1046 20 16V8C20 6.89543 19.1046 6 18 6H8.73985C8.26243 6 7.80075 6.17078 7.43827 6.48149L2.7716 10.4815C1.84038 11.2797 1.84038 12.7203 2.7716 13.5185Z" stroke="#f6f5f4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+          </button>
+        {:else}
+          <button onclick={() => letterPressed(letter.value)} class="qwertyletter" data-status={letter.status} data-val={letter.value}>{letter.value}</button>
+        {/if}
       {/each}
       </div>
     {/each}
@@ -141,13 +163,17 @@
     --s: 4rem;
     width: var(--s);
     height: var(--s);
-    border: 2px solid #444;
+    border: 2px solid hsl(0, 0%, 27%);
     font-size: 3rem;
     font-weight: bold;
     text-transform: uppercase;
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .letter.entered {
+    border-color: hsl(0, 0%, 47%);
   }
 
   .qwertygrid {
