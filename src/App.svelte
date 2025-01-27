@@ -13,6 +13,7 @@
   let board2 = $state([ { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) } ]);
   let currentAttempt = $state(0);
   let debug = $state(false);
+  let gameState = $state(true);
   // let playbutton;
   function chooseWord() {
     return wordlist[Math.floor(Math.random() * wordlist.length)].toLowerCase();
@@ -21,6 +22,7 @@
   function setup() {
     word = chooseWord();
     solved = false;
+    gameState = true;
     message = ' ';
     guess = '';
     board2 = [ { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) } ];
@@ -37,7 +39,7 @@
     if (e.key === '=') {
       setup();
     }
-    if(!solved) {
+    if(gameState) {
       if (alphabet.includes(e.key)) {      
         let k = e.key;
         letterPressed(k);
@@ -94,12 +96,14 @@
     }
     if(word == guess.toLowerCase()) {
       solved = true;
+      gameState = false;
       message = `You got it in ${currentAttempt + 1} attempts!`;
       return;
     }
     if(currentAttempt == 5) {
       message = `Rats! The word was ${word.toUpperCase()}`;
-      solved = true;
+      gameState = false;
+      solved = false;
       return;
     }
     guess = '';
@@ -129,14 +133,21 @@
   <h3 class="test">{word}</h3>
   guess: {guess}  | guess.length: {guess.length} | currentAttempt: {currentAttempt}
   {/if}
-  <div class="wordgrid">
-    {#each board2 as g}
-      {#each g.word as letter, i (i)}
-        <div class="letter" class:entered={letter != ' '} data-status={g.matches[i]} style="transition-delay: {i * 50}ms">{letter}</div>
+  <div class="wordgrid" class:solved={solved}>
+    {#each board2 as g, row}
+      {#each g.word as letter, i}
+        <div
+          class="letter"
+          class:entered={letter != ' '}
+          class:bounce={g.matches[i] == 'c' && row == currentAttempt}
+          data-status={g.matches[i]}
+          data-row={row}
+          style="animation-delay: {i * 50}ms">{letter}
+        </div>
       {/each}
     {/each}
   </div>
-  <div class="message">{message} {#if solved}<PlayButton {setup} />{/if}</div>
+  <div class="message">{message} {#if !gameState}<PlayButton {setup} />{/if}</div>
   <div class="qwertygrid">
     {#each qwerty2 as row}
       <div class="row">
@@ -248,6 +259,10 @@
     border-radius: 0.25rem;
   }
 
+  .solved .bounce {
+    animation: bounce 1s;
+  }
+
   .qwertyletter[data-val='ENTER'], .qwertyletter[data-val='DELETE'] {
     width: 4rem;
     font-size: 0.8rem;
@@ -265,4 +280,28 @@
     background-color: #3a3a3c;
     border-color: #3a3a3c;
   }
+
+  @keyframes bounce {
+		0%,
+		20% {
+			transform: translateY(0);
+		}
+		40% {
+			transform: translateY(-20px);
+		}
+		50% {
+			transform: translateY(5px);
+		}
+		60% {
+			transform: translateY(-15px);
+		}
+		80% {
+			transform: translateY(2px);
+		}
+		100% {
+			transform: translateY(0);
+		}
+	}
+
+
 </style>
