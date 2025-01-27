@@ -1,6 +1,6 @@
 <script lang="ts">
   import PlayButton from './lib/PlayButton.svelte';
-  import wordlist from './lib/wordlewordlist.js';
+  import {allWords, answers} from './lib/wordlewordlist.js';
   const title = 'wordle clone';
   let word = $state('');
   const abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
@@ -14,9 +14,10 @@
   let currentAttempt = $state(0);
   let debug = $state(false);
   let gameState = $state(true);
+  let unknownWord = $state(false);
   // let playbutton;
   function chooseWord() {
-    return wordlist[Math.floor(Math.random() * wordlist.length)].toLowerCase();
+    return answers[Math.floor(Math.random() * answers.length)].toLowerCase();
   }
 
   function setup() {
@@ -45,10 +46,12 @@
         letterPressed(k);
       }
       if (e.key === 'Enter') {
+        unknownWord = false;
         e.preventDefault();
-        enterPressed(e);
+        enterPressed();
       }
       if (e.key === 'Backspace' || e.key === 'Delete') {
+        unknownWord = false;
         deletePressed();
       }
     }
@@ -62,8 +65,9 @@
     }
   }
 
-  function enterPressed(e) {
+  function enterPressed() {
     if(guess.length == 5) {
+      unknownWord = false;
       compareGuess();
     }
   }
@@ -75,8 +79,9 @@
   }
 
   function compareGuess() {
-    if(!wordlist.includes(guess.toLowerCase())) {
+    if(!allWords.includes(guess.toLowerCase())) {
       message = `${guess.toUpperCase()} is an unknown word!`;
+      unknownWord = true;
       return;
     }
     
@@ -97,7 +102,7 @@
     if(word == guess.toLowerCase()) {
       solved = true;
       gameState = false;
-      message = `You got it in ${currentAttempt + 1} attempts!`;
+      message = currentAttempt == 0 ? 'You got it on the first try!' : `You got it in ${currentAttempt + 1} tries!`;
       return;
     }
     if(currentAttempt == 5) {
@@ -109,6 +114,7 @@
     guess = '';
     message = '';
     currentAttempt = currentAttempt + 1;
+    unknownWord = false;
   }
   
   function updateQwerty(letter: string, status: string) {
@@ -131,6 +137,7 @@
   </div>
   {#if debug}
   <h3 class="test">{word}</h3>
+  unknownWord: {unknownWord}<br>
   guess: {guess}  | guess.length: {guess.length} | currentAttempt: {currentAttempt}
   {/if}
   <div class="wordgrid" class:solved={solved}>
@@ -140,6 +147,7 @@
           class="letter"
           class:entered={letter != ' '}
           class:bounce={g.matches[i] == 'c' && row == currentAttempt}
+          class:unknownWord={unknownWord && row == currentAttempt}
           data-status={g.matches[i]}
           data-row={row}
           style="animation-delay: {i * 50}ms">{letter}
@@ -153,7 +161,7 @@
       <div class="row">
       {#each row as letter}
         {#if letter.value == 'ENTER'}
-          <button onclick={() => enterPressed('null')} class="qwertyletter" data-status={letter.status} data-val={letter.value} aria-label="Enter">{letter.value}</button>
+          <button onclick={() => enterPressed()} class="qwertyletter" data-status={letter.status} data-val={letter.value} aria-label="Enter">{letter.value}</button>
         {:else if letter.value == 'DELETE'}
           <button onclick={() => deletePressed()} class="qwertyletter" data-status={letter.status} data-val={letter.value} aria-label="Delete">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M11 10L15 14M11 14L15 10M2.7716 13.5185L7.43827 17.5185C7.80075 17.8292 8.26243 18 8.73985 18H18C19.1046 18 20 17.1046 20 16V8C20 6.89543 19.1046 6 18 6H8.73985C8.26243 6 7.80075 6.17078 7.43827 6.48149L2.7716 10.4815C1.84038 11.2797 1.84038 12.7203 2.7716 13.5185Z" stroke="#f6f5f4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
@@ -260,7 +268,11 @@
   }
 
   .solved .bounce {
-    animation: bounce 1s;
+    animation: bounce 0.7s;
+  }
+
+  .unknownWord.letter {
+    animation: shake 0.3s;
   }
 
   .qwertyletter[data-val='ENTER'], .qwertyletter[data-val='DELETE'] {
@@ -302,6 +314,62 @@
 			transform: translateY(0);
 		}
 	}
+
+  @keyframes shake {
+  0% {
+    transform: translate(1px);
+  }
+  20% {
+    transform: translate(-2px);
+  }
+  40% {
+    transform: translate(2px);
+  }
+  60% {
+    transform: translate(-2px);
+  }
+  80% {
+    transform: translate(2px);
+  }
+  100% {
+    transform: translate(1px);
+  }
+}
+  @keyframes shake2 {
+  0% {
+    transform: translate(1px);
+  }
+  10% {
+    transform: translate(-2px);
+  }
+  20% {
+    transform: translate(2px);
+  }
+  30% {
+    transform: translate(-2px);
+  }
+  40% {
+    transform: translate(2px);
+  }
+  50% {
+    transform: translate(-2px);
+  }
+  60% {
+    transform: translate(2px);
+  }
+  70% {
+    transform: translate(-2px);
+  }
+  80% {
+    transform: translate(2px);
+  }
+  90% {
+    transform: translate(-2px);
+  }
+  100% {
+    transform: translate(1px);
+  }
+}
 
 
 </style>
