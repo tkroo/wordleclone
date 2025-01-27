@@ -1,6 +1,7 @@
 <script lang="ts">
   import PlayButton from './lib/PlayButton.svelte';
   import {allWords, answers} from './lib/wordlewordlist.js';
+  import confetti from 'canvas-confetti';
   const title = 'wordle clone';
   let word = $state('');
   const abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
@@ -12,7 +13,7 @@
   let guess:string = $state('');
   let board2 = $state([ { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) } ]);
   let currentAttempt = $state(0);
-  let debug = $state(false);
+  let debug = $state(true);
   let gameState = $state(true);
   let unknownWord = $state(false);
   // let playbutton;
@@ -103,6 +104,7 @@
       solved = true;
       gameState = false;
       message = currentAttempt == 0 ? 'You got it on the first try!' : `You got it in ${currentAttempt + 1} tries!`;
+      celebrate();
       return;
     }
     if(currentAttempt == 5) {
@@ -126,6 +128,36 @@
     }
   }
 
+  function celebrate() {
+    var defaults = {
+      spread: 360,
+      ticks: 50,
+      gravity: 0,
+      decay: 0.94,
+      startVelocity: 30,
+      colors: ['001a6e', '074799', '009990', 'e1ffbb', 'ffcc00']
+    };
+
+    function shoot() {
+      confetti({
+        ...defaults,
+        particleCount: 40,
+        scalar: 1.2,
+        shapes: ['star']
+      });
+
+      confetti({
+        ...defaults,
+        particleCount: 10,
+        scalar: 5,
+        shapes: ['star']
+      });
+    }
+
+    setTimeout(shoot, 0);
+    setTimeout(shoot, 200);
+  }
+
 </script>
 
 <svelte:body on:keydown={handleKeyDown} />
@@ -137,8 +169,7 @@
   </div>
   {#if debug}
   <h3 class="test">{word}</h3>
-  unknownWord: {unknownWord}<br>
-  guess: {guess}  | guess.length: {guess.length} | currentAttempt: {currentAttempt}
+  <!-- guess: {guess}  | guess.length: {guess.length} | currentAttempt: {currentAttempt} -->
   {/if}
   <div class="wordgrid" class:solved={solved}>
     {#each board2 as g, row}
