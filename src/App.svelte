@@ -13,7 +13,7 @@
   let guess:string = $state('');
   let board2 = $state([ { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) } ]);
   let currentAttempt = $state(0);
-  let debug = $state(true);
+  let debug = $state(false);
   let gameState = $state(true);
   let unknownWord = $state(false);
   // let playbutton;
