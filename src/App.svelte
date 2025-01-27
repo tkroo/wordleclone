@@ -131,9 +131,9 @@
   function celebrate() {
     var defaults = {
       spread: 360,
-      ticks: 50,
+      ticks: 60,
       gravity: 0,
-      decay: 0.94,
+      decay: 0.9,
       startVelocity: 30,
       colors: ['001a6e', '074799', '009990', 'e1ffbb', 'ffcc00']
     };
@@ -216,8 +216,9 @@
       {/each}
       </div>
     {/each}
-  </div>  
+  </div>
 </main>
+<footer><a href="https://github.com/tkroo/wordleclone">source</a></footer>
 
 
 
@@ -232,9 +233,20 @@
 
 <style>
   main {
+    padding: 1rem 0 0 0;
+    flex: 1 0 auto;
     --ccolor: hsl(157, 90%, 32%);
     --icolor: hsl(51, 37%, 48%);
     --xcolor: hsl(240, 1%, 20%);
+  }
+
+  footer {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    padding: 0 0 1rem 0.5rem;
   }
 
   .test {

@@ -23,14 +23,17 @@ a:hover {
 }
 html {
   font-size: 16px;
+  height: 100%;
 }
 
 body {
+  min-height: 100vh;
   margin: 0;
   display: flex;
-  place-items: flex-start;
+  flex-direction: column;
+  /* place-items: flex-start; */
   min-width: 320px;
-  min-height: 100vh;
+  height: 100%;
 }
 
 h1 {
@@ -45,8 +48,10 @@ h1 {
 #app {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 button {
