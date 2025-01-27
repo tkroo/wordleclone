@@ -2,7 +2,7 @@
   import PlayButton from './lib/PlayButton.svelte';
   import {allWords, answers} from './lib/wordlewordlist.js';
   import confetti from 'canvas-confetti';
-  const title = 'wordle clone';
+  const title = 'word game clone';
   let word = $state('');
   const abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
   const alphabet = abc.concat(abc.map(x => x.toLowerCase()));
@@ -154,12 +154,25 @@
       });
     }
 
-    setTimeout(shoot, 0);
-    setTimeout(shoot, 200);
+    setTimeout(shoot, 400);
+    setTimeout(shoot, 600);
   }
-
 </script>
 
+
+
+
+
+
+
+
+
+
+
+<svelte:head>
+  <title>{title}</title>
+  <meta name="description" content="yet another wordle clone" />
+</svelte:head>
 <svelte:body on:keydown={handleKeyDown} />
 <main>
   <div class="titlewrap">
@@ -206,7 +219,24 @@
   </div>  
 </main>
 
+
+
+
+
+
+
+
+
+
+
+
 <style>
+  main {
+    --ccolor: hsl(157, 90%, 32%);
+    --icolor: hsl(51, 37%, 48%);
+    --xcolor: hsl(240, 1%, 20%);
+  }
+
   .test {
     text-transform: uppercase;
     letter-spacing: normal;
@@ -264,6 +294,7 @@
     align-items: center;
     position: relative;
 		transform-style: preserve-3d;
+    transition: all 0.3s ease-in;
   }
 
   .letter.entered {
@@ -291,7 +322,7 @@
     padding: 0.5rem 1rem;
     width: 0.6rem;
     height: 3rem;
-    background-color: #818384;
+    background-color: #757677;
     color: #f8f8f8;
     font-size: 1rem;
     font-weight: bold;
@@ -312,16 +343,20 @@
   }
 
   .letter[data-status='c'], .qwertyletter[data-status='c'] {
-    background-color: #538d4e;
-    border-color: #538d4e;
+    background-color: var(--ccolor);
+    border-color: var(--ccolor);
   }
   .letter[data-status='i'], .qwertyletter[data-status='i'] {
-    background-color: #b59f3b;
-    border-color: #b59f3b;
+    background-color: var(--icolor);
+    border-color: var(--icolor);
   }
   .letter[data-status='x'], .qwertyletter[data-status='x'] {
-    background-color: #3a3a3c;
-    border-color: #3a3a3c;
+    background-color: var(--xcolor);
+    border-color: var(--xcolor);
+  }
+
+  .qwertyletter[data-status='x'] {
+    color: #808080;
   }
 
   @keyframes bounce {

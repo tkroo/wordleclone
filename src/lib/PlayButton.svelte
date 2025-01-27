@@ -14,7 +14,7 @@
 <style>
   .playagain {
     font-size: 1.2rem;
-    background-color: #538d4e;
+    background-color: var(--ccolor);
     color: #fff;
     margin-left: 1rem;
     padding: 0.5rem 0.75rem;
