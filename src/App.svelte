@@ -1,5 +1,7 @@
 <script lang="ts">
+  import PlayButton from './lib/PlayButton.svelte';
   import wordlist from './lib/wordlewordlist.js';
+  const title = 'wordle clone';
   let word = $state('');
   const abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
   const alphabet = abc.concat(abc.map(x => x.toLowerCase()));
@@ -11,8 +13,7 @@
   let board2 = $state([ { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) }, { word:'     ', matches: new Array(5) } ]);
   let currentAttempt = $state(0);
   let debug = $state(false);
-  let playbutton: HTMLButtonElement;
-  
+  // let playbutton;
   function chooseWord() {
     return wordlist[Math.floor(Math.random() * wordlist.length)].toLowerCase();
   }
@@ -42,7 +43,8 @@
         letterPressed(k);
       }
       if (e.key === 'Enter') {
-        enterPressed();
+        e.preventDefault();
+        enterPressed(e);
       }
       if (e.key === 'Backspace' || e.key === 'Delete') {
         deletePressed();
@@ -58,10 +60,8 @@
     }
   }
 
-  function enterPressed() {
-    if(guess.length > 5) {
-      return;
-    } else {
+  function enterPressed(e) {
+    if(guess.length == 5) {
       compareGuess();
     }
   }
@@ -72,11 +72,9 @@
     board2[currentAttempt].word = guess.padEnd(5, ' ');
   }
 
-
-
   function compareGuess() {
     if(!wordlist.includes(guess.toLowerCase())) {
-      message = 'Unknown word!';
+      message = `${guess.toUpperCase()} is an unknown word!`;
       return;
     }
     
@@ -95,10 +93,8 @@
       }
     }
     if(word == guess.toLowerCase()) {
-      console.log('solved!');
       solved = true;
       message = `You got it in ${currentAttempt + 1} attempts!`;
-      playbutton.focus();
       return;
     }
     if(currentAttempt == 5) {
@@ -124,24 +120,29 @@
 
 <svelte:body on:keydown={handleKeyDown} />
 <main>
+  <div class="titlewrap">
+    {#each title.split('') as letter}
+      <div class="titleletter">{letter}</div>
+    {/each}
+  </div>
   {#if debug}
-  <h1 class="test">{word}</h1>
+  <h3 class="test">{word}</h3>
   guess: {guess}  | guess.length: {guess.length} | currentAttempt: {currentAttempt}
   {/if}
   <div class="wordgrid">
     {#each board2 as g}
-      {#each g.word as letter, i}
+      {#each g.word as letter, i (i)}
         <div class="letter" class:entered={letter != ' '} data-status={g.matches[i]} style="transition-delay: {i * 50}ms">{letter}</div>
       {/each}
     {/each}
   </div>
-  <div class="message">{message}<button class="playagain" class:showme={solved} bind:this={playbutton} onclick={setup}>Play again</button></div>
+  <div class="message">{message} {#if solved}<PlayButton {setup} />{/if}</div>
   <div class="qwertygrid">
     {#each qwerty2 as row}
       <div class="row">
       {#each row as letter}
         {#if letter.value == 'ENTER'}
-          <button onclick={() => enterPressed()} class="qwertyletter" data-status={letter.status} data-val={letter.value} aria-label="Enter">{letter.value}</button>
+          <button onclick={() => enterPressed('null')} class="qwertyletter" data-status={letter.status} data-val={letter.value} aria-label="Enter">{letter.value}</button>
         {:else if letter.value == 'DELETE'}
           <button onclick={() => deletePressed()} class="qwertyletter" data-status={letter.status} data-val={letter.value} aria-label="Delete">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M11 10L15 14M11 14L15 10M2.7716 13.5185L7.43827 17.5185C7.80075 17.8292 8.26243 18 8.73985 18H18C19.1046 18 20 17.1046 20 16V8C20 6.89543 19.1046 6 18 6H8.73985C8.26243 6 7.80075 6.17078 7.43827 6.48149L2.7716 10.4815C1.84038 11.2797 1.84038 12.7203 2.7716 13.5185Z" stroke="#f6f5f4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
@@ -162,6 +163,27 @@
     color: #444;
   }
 
+  .titlewrap {
+    --lr: 2rem;
+    margin: 0 var(--lr) 1.5rem var(--lr);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .titleletter {
+    --wh: 1rem;
+    color: #eee;
+    font-size: 2rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color:hsl(202, 100%, 100%);
+  }
+
+
   .wordgrid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -173,7 +195,7 @@
   .message {
     margin-bottom: 2rem;
     height: 2rem;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -192,7 +214,6 @@
     align-items: center;
     position: relative;
 		transform-style: preserve-3d;
-    /* transition: transform 100s ease-in-out; */
   }
 
   .letter.entered {
@@ -206,10 +227,11 @@
     gap: 0.5rem;
   }
 
-  .row {
+  .qwertygrid .row {
     display: flex;
     flex-direction: row;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
   }
 
   .qwertyletter {
@@ -219,7 +241,6 @@
     padding: 0.5rem 1rem;
     width: 0.6rem;
     height: 3rem;
-    /* aspect-ratio: 1/2; */
     background-color: #818384;
     color: #f8f8f8;
     font-size: 1rem;
@@ -244,21 +265,4 @@
     background-color: #3a3a3c;
     border-color: #3a3a3c;
   }
-
-  .playagain {
-    font-size: 1.2rem;
-    background-color: #fff;
-    color: #000;
-    visibility: hidden;
-    width: 0;
-    margin-left: 0;
-    padding: 0;
-  }
-  .showme {
-    visibility: visible;
-    width: auto;
-    margin-left: 1rem;
-    padding: 0.25rem 0.5rem;
-  }
-
 </style>
