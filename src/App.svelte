@@ -27,7 +27,7 @@
   // let OuterWidth = $state(0);
 
   let position = $derived.by(() => {
-    let el = document.querySelector('.letter[data-row="' + currentAttempt + '"]');
+    let el: HTMLElement = document.querySelector('.letter[data-row="' + currentAttempt + '"]');
     if (el) {
       let offset = el.offsetTop + el.offsetHeight/2;
       return 1/(InnerHeight/offset);
@@ -116,7 +116,7 @@
     if(word == guess.toLowerCase()) {
       solved = true;
       gameState = false;
-      message = currentAttempt == 0 ? 'You got it on the first try!' : `You got it in ${currentAttempt + 1} tries!`;
+      message = currentAttempt == 0 ? 'Solved on the first try!' : `Solved in ${currentAttempt + 1} tries!`;
       celebrate();
       return;
     }
@@ -186,7 +186,7 @@
 <svelte:window bind:innerHeight={InnerHeight} bind:innerWidth={InnerWidth} />
 <svelte:head>
   <title>{title}</title>
-  <meta name="description" content="yet another wordle clone" />
+  <meta name="description" content="yet another wordle-like game" />
 </svelte:head>
 <svelte:body on:keydown={handleKeyDown} />
 <main>
