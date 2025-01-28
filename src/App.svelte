@@ -121,7 +121,7 @@
       return;
     }
     if(currentAttempt == 5) {
-      message = `Rats! The word was ${word.toUpperCase()}`;
+      message = `The word was ${word.toUpperCase()}`;
       gameState = false;
       solved = false;
       return;
@@ -282,14 +282,14 @@
 
   .titleletter {
     --wh: 1rem;
-    color: #eee;
+    /* color: #eee; */
     font-size: 2rem;
     font-weight: 400;
     text-transform: uppercase;
     display: flex;
     justify-content: center;
     align-items: center;
-    color:hsl(202, 100%, 100%);
+    /* color:hsl(202, 100%, 100%); */
   }
 
 
@@ -324,6 +324,7 @@
     position: relative;
 		transform-style: preserve-3d;
     transition: all 0.3s ease-in;
+    color: light-dark(#161620, #efedea);
   }
 
   .letter.entered {
@@ -375,14 +376,17 @@
   }
 
   .letter[data-status='c'], .qwertyletter[data-status='c'] {
+    color: #efedea;
     background-color: var(--ccolor);
     border-color: var(--ccolor);
   }
   .letter[data-status='i'], .qwertyletter[data-status='i'] {
+    color: #efedea;
     background-color: var(--icolor);
     border-color: var(--icolor);
   }
   .letter[data-status='x'], .qwertyletter[data-status='x'] {
+    color: #efedea;
     background-color: var(--xcolor);
     border-color: var(--xcolor);
   }
