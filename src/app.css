@@ -1,3 +1,7 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -27,8 +31,9 @@ html {
 }
 
 body {
-  min-height: 100vh;
+  /* min-height: 100vh; */
   margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   /* place-items: flex-start; */
@@ -48,10 +53,12 @@ h1 {
 #app {
   max-width: 1280px;
   margin: 0 auto;
+  padding: 0;
   text-align: center;
   display: flex;
   flex-direction: column;
   height: 100%;
+  /* border:1px solid dodgerblue; */
 }
 
 button {
@@ -86,12 +93,13 @@ button:focus-visible {
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 700px) {
+  html {
+    font-size: 14px;
+  }
+}
+@media (max-width: 500px) {
   html {
     font-size: 12px;
-  }
-  #app {
-    max-width: 790px;
-    padding: 2rem 0 0 0;
   }
 }
