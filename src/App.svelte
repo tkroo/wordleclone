@@ -21,6 +21,19 @@
     return answers[Math.floor(Math.random() * answers.length)].toLowerCase();
   }
 
+  let InnerHeight = $state(0);
+  // let InnerWidth = $state(0);
+  // let OuterHeight = $state(0);
+  // let OuterWidth = $state(0);
+
+  let position = $derived.by(() => {
+    let el = document.querySelector('.letter[data-row="' + currentAttempt + '"]');
+    if (el) {
+      let offset = el.offsetTop + el.offsetHeight/2;
+      return 1/(InnerHeight/offset);
+    }
+  })
+
   function setup() {
     word = chooseWord();
     solved = false;
@@ -135,6 +148,7 @@
       gravity: 0,
       decay: 0.9,
       startVelocity: 30,
+      origin: { x: 0.5, y: position },
       colors: ['001a6e', '074799', '009990', 'e1ffbb', 'ffcc00']
     };
 
@@ -169,6 +183,7 @@
 
 
 
+<svelte:window bind:innerHeight={InnerHeight} />
 <svelte:head>
   <title>{title}</title>
   <meta name="description" content="yet another wordle clone" />
@@ -238,6 +253,7 @@
     --ccolor: hsl(157, 90%, 32%);
     --icolor: hsl(51, 37%, 48%);
     --xcolor: hsl(240, 1%, 20%);
+    width: 100%;
   }
 
   footer {
@@ -285,7 +301,7 @@
   }
 
   .message {
-    margin-bottom: 2rem;
+    margin: 2rem 0;
     height: 2rem;
     font-size: 1.2rem;
     display: flex;
@@ -318,13 +334,16 @@
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
+    width: 100%;
   }
 
   .qwertygrid .row {
     display: flex;
+    justify-content: center;
     flex-direction: row;
     gap: 0.75rem;
     margin-bottom: 0.5rem;
+    width: 100%;
   }
 
   .qwertyletter {
