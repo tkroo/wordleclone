@@ -22,7 +22,7 @@
   }
 
   let InnerHeight = $state(0);
-  // let InnerWidth = $state(0);
+  let InnerWidth = $state(0);
   // let OuterHeight = $state(0);
   // let OuterWidth = $state(0);
 
@@ -183,20 +183,21 @@
 
 
 
-<svelte:window bind:innerHeight={InnerHeight} />
+<svelte:window bind:innerHeight={InnerHeight} bind:innerWidth={InnerWidth} />
 <svelte:head>
   <title>{title}</title>
   <meta name="description" content="yet another wordle clone" />
 </svelte:head>
 <svelte:body on:keydown={handleKeyDown} />
 <main>
-  <div class="titlewrap">
+  <div class="titlewrap" onclick={() => {debug = !debug}}>
     {#each title.split('') as letter}
       <div class="titleletter">{letter}</div>
     {/each}
   </div>
   {#if debug}
   <h3 class="test">{word}</h3>
+  iw: {InnerWidth} | ih: {InnerHeight}
   <!-- guess: {guess}  | guess.length: {guess.length} | currentAttempt: {currentAttempt} -->
   {/if}
   <div class="wordgrid" class:solved={solved}>
